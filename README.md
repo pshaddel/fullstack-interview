@@ -33,7 +33,7 @@ When refactoring, you should consider the following aspects:
 - Your code is covered by automated tests to ensure the stability of the application
  
 > [!NOTE]
-> We provided you with an clean express.js server to run the example. For your implementations, feel free to use any library out there to help you with your solution.
+> We provided you with an clean express.js server to run the example. For your implementations, feel free to use any library out there to help you with your solution. If you decide to choose another JavaScript/TypeScript http library/framework (eg. NestJs) update the run config described below if needed, and ensure that the routes of the described actions don't change.
 
 
 ## Task 2 - Design an architecture to provide a membership export (conception only)
