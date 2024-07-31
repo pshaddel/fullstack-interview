@@ -9,6 +9,37 @@ You are working in the product team at eversports that is maintaining the eversp
 
 The team also started an initiative in this quarter to modernize the codebase by refactoring features implemented in an old technology stack to a more modern one.  
 
+### Domain: Memberships
+
+A `Membership` allows a user to participate at any class the a specific sport venue within a specific timespan. Within this timespan, the membership is divided into `MembershipPeriods`. The MembershipPeriods represent billing periods that the user has to pay for.
+
+For the scope of this exercise, the domain model was reduced to a reasonable size. 
+
+#### Entity: Membership
+```ts
+interface Membership {
+    name: string // name of the membership
+    user: number // the user that the membership is assigned to
+    recurringPrice: number // price the user has to pay for every period
+    validFrom: Date // start of the validity
+    validUntil: Date // end of the validity
+    state: string // indicates the state of the membership
+    paymentMethod: string // which payment method will be used to pay for the periods
+    billingInterval: string // the interval unit of the periods
+    billingPeriods: number // the number of periods the membership has
+}
+```
+
+#### Entity: MembershipPeriod
+```ts
+interface MembershipPeriod {
+    membership: number // membership the period is attached to
+    start: Date // indicates the start of the period
+    end: Date // indicates the end of the period
+    state: string
+}
+```
+
 
 ## Task 1 - Modernization of the membership codebase (backend only)
 
@@ -31,7 +62,10 @@ When refactoring, you should consider the following aspects:
 - You use Typescript instead of Javascript to enabled type safety
 - Your code is separated based on concerns
 - Your code is covered by automated tests to ensure the stability of the application
- 
+
+> [!NOTE]
+> For the scope of this task, the data used is mocked within the json files `membership.json` and `membership-periods.json`
+
 > [!NOTE]
 > We provided you with an clean express.js server to run the example. For your implementations, feel free to use any library out there to help you with your solution. If you decide to choose another JavaScript/TypeScript http library/framework (eg. NestJs) update the run config described below if needed, and ensure that the routes of the described actions don't change.
 
@@ -77,7 +111,7 @@ npm run test
 
 We believe that great developers are not bound to a specific technology set, but no matter their toolbox they are able to think critically about how to structure and design good code. For this exercise, we provided just a small and simple set of tools to run the a application and tests. Feel free to use any library out there to help you with your implementation.
 
-### Required
+### Pre-installed
 
 - Express - https://expressjs.com/
 - TypeScript - https://www.typescriptlang.org/

@@ -41,7 +41,7 @@ router.post("/", (req, res) => {
     return res.status(400).json({ message: "invalidBillingPeriods" });
   }
 
-  const validFrom = req.body.validFrom || new Date()
+  const validFrom = req.body.validFrom ? new Date(req.body.validFrom) : new Date()
   const validUntil = new Date(validFrom);
   if (req.body.billingInterval === 'monthly') {
     validUntil.setMonth(validFrom.getMonth() + req.body.billingPeriods);
@@ -71,7 +71,6 @@ router.post("/", (req, res) => {
     recurringPrice: req.body.recurringPrice,
     billingPeriods: req.body.billingPeriods,
     billingInterval: req.body.billingInterval,
-
   };
   memberships.push(newMembership);
 
