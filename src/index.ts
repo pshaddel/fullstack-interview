@@ -6,7 +6,7 @@ import { errorHandler } from './error-handler.middleware'
 const legacyMembershipRoutes = require('./legacy/routes/membership.routes')
 
 const app = express()
-const port = 3000
+const port = 3099
 
 app.use(express.json())
 app.use('/memberships', membershipRoutes);

@@ -22,33 +22,33 @@ router.post("/", (req, res) => {
     return res.status(400).json({ message: "cashPriceBelow100" });
   }
 
-  if (req.body.billingPeriod === 'monthly') {
-    if (req.body.billingPeriod > 12) {
-      return res.status(400).json({ message: "billingPeriodMoreThan12Months" });
+  if (req.body.billingInterval === 'monthly') {
+    if (req.body.billingPeriods > 12) {
+      return res.status(400).json({ message: "billingPeriodsMoreThan12Months" });
     }
-    if (req.billingPeriod < 6) {
-      return res.status(400).json({ message: "billingPeriodLessThan6Months" });
+    if (req.billingPeriods < 6) {
+      return res.status(400).json({ message: "billingPeriodsLessThan6Months" });
     }
-  } else if (req.body.billingPeriod === 'yearly') {
-    if (req.body.billingPeriod > 3) {
-      if (req.body.billingPeriod > 10) {
-        return res.status(400).json({ message: "billingPeriodMoreThan10Years" });
+  } else if (req.body.billingInterval === 'yearly') {
+    if (req.body.billingPeriods > 3) {
+      if (req.body.billingPeriods > 10) {
+        return res.status(400).json({ message: "billingPeriodsMoreThan10Years" });
       } else {
-        return res.status(400).json({ message: "billingPeriodLessThan3Years" });
+        return res.status(400).json({ message: "billingPeriodsLessThan3Years" });
       }
     }
   } else {
-    return res.status(400).json({ message: "invalidBillingPeriod" });
+    return res.status(400).json({ message: "invalidBillingPeriods" });
   }
 
   const validFrom = req.body.validFrom || new Date()
   const validUntil = new Date(validFrom);
-  if (req.body.billingPeriod === 'monthly') {
-    validUntil.setMonth(validFrom.getMonth() + req.body.billingPeriod);
-  } else if (req.body.billingPeriod === 'yearly') {
-    validUntil.setMonth(validFrom.getMonth() + req.body.billingPeriod * 12);
-  } else if (req.body.billingPeriod === 'weekly') {
-    validUntil.setDate(validFrom.getDate() + req.body.billingPeriod * 7);
+  if (req.body.billingInterval === 'monthly') {
+    validUntil.setMonth(validFrom.getMonth() + req.body.billingPeriods);
+  } else if (req.body.billingInterval === 'yearly') {
+    validUntil.setMonth(validFrom.getMonth() + req.body.billingPeriods * 12);
+  } else if (req.body.billingInterval === 'weekly') {
+    validUntil.setDate(validFrom.getDate() + req.body.billingPeriods * 7);
   }
 
   let state = 'active'
@@ -69,7 +69,7 @@ router.post("/", (req, res) => {
     user: userId,
     paymentMethod: req.body.paymentMethod,
     recurringPrice: req.body.recurringPrice,
-    billingPeriod: req.body.billingPeriod,
+    billingPeriods: req.body.billingPeriods,
     billingInterval: req.body.billingInterval,
 
   };
@@ -77,14 +77,14 @@ router.post("/", (req, res) => {
 
   const membershipPeriods = []
   let periodStart = validFrom
-  for (let i = 0; i < req.body.billingPeriod; i++) {
+  for (let i = 0; i < req.body.billingPeriods; i++) {
     const validFrom = periodStart
     const validUntil = new Date(validFrom)
-    if (req.body.billingPeriod === 'monthly') {
+    if (req.body.billingInterval === 'monthly') {
       validUntil.setMonth(validFrom.getMonth() + 1);
-    } else if (req.body.billingPeriod === 'yearly') {
+    } else if (req.body.billingInterval === 'yearly') {
       validUntil.setMonth(validFrom.getMonth() + 12);
-    } else if (req.body.billingPeriod === 'weekly') {
+    } else if (req.body.billingInterval === 'weekly') {
       validUntil.setDate(validFrom.getDate() + 7);
     }
     const period = {
