@@ -1,7 +1,7 @@
-import { app } from "../index";
-import supertest from "supertest";
 import { equal } from "node:assert";
 import { describe, it } from "node:test";
+import supertest from "supertest";
+import { app } from "../index";
 
 describe("Modern Membership Routes", () => {
 	describe("GET /legacy/memberships", () => {
