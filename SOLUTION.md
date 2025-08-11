@@ -8,8 +8,8 @@
 - [x] Add vscode settings folder in the project root(add biome and jest extensions)
 - [x] Use Either SWC or Node Core Test Library
 - [x] remove ts-node jest from project
-- [ ] Add the test coverage badge
-- [ ] Add Formatter and Linter and Tests to the Github CI
+- [x] Add the test coverage badge
+- [x] Add Formatter and Linter and Tests to the Github CI
 - [ ] Add a dot env file for the port configuration and also NODE_ENV
 - [ ] Add dockerfile for running the app inside the container
 - [ ] Update dependencies
