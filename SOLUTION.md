@@ -3,16 +3,16 @@
 ## Actions
 
 ### Preparation
-- [ ] Add pnpm lock to gitignore
-- [ ] Use newer versions of node without ts-node(v.22 support it without being experimental)
-- [ ] Add dockerfile for running the app inside the container
-- [ ] Add biome for formatting and linting
+- [x] Add pnpm lock to gitignore
+- [ ] Use newer versions of node without ts-node(v.23 support it without being experimental)
+- [x] Add biome for formatting and linting
 - [ ] Add vscode settings folder in the project root(add biome and jest extensions)
-- [ ] Update dependencies
-- [ ] Use Either SWC or Node Core Test Library
+- [x] Use Either SWC or Node Core Test Library
 - [ ] Add the test coverage badge
 - [ ] Add Formatter and Linter and Tests to the Github CI
 - [ ] Add a dot env file for the port configuration and also NODE_ENV
+- [ ] Add dockerfile for running the app inside the container
+- [ ] Update dependencies
 
 ### Implementation Phases
 - [ ] Add Tests to the legacy codebases to re-use them in the modern codebase
