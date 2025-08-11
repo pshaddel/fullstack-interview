@@ -28,7 +28,7 @@ router.post("/", (req, res) => {
 				.status(400)
 				.json({ message: "billingPeriodsMoreThan12Months" });
 		}
-		if (req.billingPeriods < 6) {
+    if (req.body.billingPeriods < 6) {
 			return res.status(400).json({ message: "billingPeriodsLessThan6Months" });
 		}
 	} else if (req.body.billingInterval === "yearly") {
