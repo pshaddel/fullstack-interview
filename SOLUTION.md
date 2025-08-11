@@ -15,8 +15,8 @@
 - [ ] Update dependencies
 
 ### Implementation Phases
-- [ ] Add Tests to the legacy codebases to re-use them in the modern codebase
-- [ ] Fix billing periods: https://github.com/pshaddel/fullstack-interview/commit/36237251a43c337b51023480c439604d20dd89d6
+- [x] Add Tests to the legacy codebases to re-use them in the modern codebase
+- [x] Fix billing periods: https://github.com/pshaddel/fullstack-interview/commit/36237251a43c337b51023480c439604d20dd89d6
 - [ ] You cannot create any weekly memberships, you get `invalidBillingPeriods` error
 - [ ] status of periods is always `planned`
 - [ ] You will never have the status `active` :
@@ -31,11 +31,12 @@
 		state = "expired";
 	}
 ```
+- [ ] id was missing in the membership interface
 - [ ] Periods are always calculatable from the membership, do we need to store them?
 
 ### Refactoring Points
-- [ ] Use Zod for validation in the modern codebase with proper error handling
 - [ ] Refactor error messages to a http error handler
+- [ ] Use Zod for validation in the modern codebase with proper error handling
 - [ ] more readable version instead of all if else
 - [ ] Maybe go for uuid v7 for ids as it is sortable and has a timestamp
 - [ ] Use Enum for the state of the memberships

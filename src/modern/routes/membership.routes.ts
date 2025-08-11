@@ -1,13 +1,34 @@
 import express, { type Request, type Response } from "express";
 
-const memberships = require("../../data/memberships.json");
-const membershipPeriods = require("../../data/membership-periods.json");
+interface Membership {
+	id: number // unique identifier for the membership
+	name: string // name of the membership
+	user: number // the user that the membership is assigned to
+	recurringPrice: number // price the user has to pay for every period
+	validFrom: Date // start of the validity
+	validUntil: Date // end of the validity
+	state: 'active' | 'pending' | 'expired'
+	paymentMethod: "cash" | "creditCard" // the payment method used for the membership
+	billingInterval: string // the interval unit of the periods
+	billingPeriods: number // the number of periods the membership has
+};
+
+interface MembershipPeriod {
+	membership: number // membership the period is attached to
+	start: Date // indicates the start of the period
+	end: Date // indicates the end of the period
+	state: string
+};
+
+const memberships = require("../../data/memberships.json") as Membership[];
+const membershipPeriods = require("../../data/membership-periods.json") as MembershipPeriod[];
 const { v4: uuidv4 } = require("uuid");
 
 const router = express.Router();
 
+const userId = 2000;
+
 router.post("/", (req: Request, res: Response) => {
-	const userId = 2000;
 	if (!req.body.name || !req.body.recurringPrice) {
 		return res.status(400).json({ message: "missingMandatoryFields" });
 	}
@@ -57,7 +78,7 @@ router.post("/", (req: Request, res: Response) => {
 		validUntil.setDate(validFrom.getDate() + req.body.billingPeriods * 7);
 	}
 
-	let state = "active";
+	let state: Membership['state'] = "active";
 	if (validFrom > new Date()) {
 		// Membership is not yet active - it starts in the future
 		state = "pending";

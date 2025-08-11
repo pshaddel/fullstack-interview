@@ -7,8 +7,8 @@ import { app } from "../index";
 describe("GET /legacy/memberships", () => {
 	it("should handle GET requests to /legacy/memberships", async () => {
 		// Test logic for GET /memberships
-		app.get("/error", (_req, _res) => {
-			throw new Error("This is an unhandled error for testing purposes");
+        app.get("/error", (_req, _res, next) => {
+            return next("This is an unhandled error for testing purposes");
 		}); // Intentionally causing an error to test error handling
 		app.use(errorHandler);
 		const response = await supertest(app).get("/error");
