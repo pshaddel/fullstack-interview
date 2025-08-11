@@ -1,0 +1,17 @@
+coverage:
+  status:
+    project:
+      default:
+        target: 80%
+        threshold: 1%
+    patch:
+      default:
+        target: 80%
+
+fixes:
+  - "dist/::src/"  # Map dist/ paths to src/ paths
+ignore:
+  - "dist/tests/**"
+  - "**/*.test.js"
+  - "node_modules/**/*"
+  - "coverage/**/*"

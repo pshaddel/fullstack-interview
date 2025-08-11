@@ -4,9 +4,8 @@
 
 ### Preparation
 - [x] Add pnpm lock to gitignore
-- [ ] Use newer versions of node without ts-node(v.23 support it without being experimental)
 - [x] Add biome for formatting and linting
-- [ ] Add vscode settings folder in the project root(add biome and jest extensions)
+- [x] Add vscode settings folder in the project root(add biome and jest extensions)
 - [x] Use Either SWC or Node Core Test Library
 - [ ] Add the test coverage badge
 - [ ] Add Formatter and Linter and Tests to the Github CI
