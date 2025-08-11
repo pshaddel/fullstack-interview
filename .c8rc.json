@@ -1,17 +1,8 @@
 {
-  "reporter": [
-    "lcov",
-    "text",
-    "html"
-  ],
-  "exclude": [
-    "dist/tests/**",
-    "**/*.test.js"
-  ],
-  "include": [
-    "dist/**/*.js"
-  ],
-  "all": true,
-  "src": "src",
-  "reportsDir": "coverage"
+	"reporter": ["lcov", "text", "html"],
+	"exclude": ["dist/tests/**", "**/*.test.js"],
+	"include": ["dist/**/*.js"],
+	"all": true,
+	"src": "src",
+	"reportsDir": "coverage"
 }
