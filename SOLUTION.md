@@ -12,6 +12,7 @@
 - [ ] Use Either SWC or Node Core Test Library
 - [ ] Add the test coverage badge
 - [ ] Add Formatter and Linter and Tests to the Github CI
+- [ ] Add a dot env file for the port configuration and also NODE_ENV
 
 ### Implementation Phases
 - [ ] Add Tests to the legacy codebases to re-use them in the modern codebase

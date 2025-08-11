@@ -11,8 +11,17 @@ const port = 3099
 app.use(express.json())
 app.use('/memberships', membershipRoutes);
 app.use('/legacy/memberships', legacyMembershipRoutes);
+app.use('/health', (req, res) => {
+  res.status(200).json({ status: 'ok' });
+});
 app.use(errorHandler);
 
-app.listen(port, () => {
-  console.log(`Server running on http://localhost:${port}`)
-})
+if (process.env.NODE_ENV !== 'test') {
+  app.listen(port, () => {
+    console.log(`Server running on http://localhost:${port}`)
+  })
+};
+
+export {
+  app
+}
