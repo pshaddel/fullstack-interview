@@ -1,22 +1,31 @@
 import express, { type Request, type Response } from "express";
 
 interface Membership {
-	id: number // unique identifier for the membership
-	name: string // name of the membership
-	user: number // the user that the membership is assigned to
-	recurringPrice: number // price the user has to pay for every period
-	validFrom: Date // start of the validity
-	validUntil: Date // end of the validity
+	id: number
+	name: string
+	/* the user that the membership is assigned to */
+	user: number
+	/* price the user has to pay for every period */
+	recurringPrice: number
+	validFrom: Date
+	validUntil: Date
 	state: 'active' | 'pending' | 'expired'
-	paymentMethod: "cash" | "creditCard" // the payment method used for the membership
-	billingInterval: string // the interval unit of the periods
-	billingPeriods: number // the number of periods the membership has
+	paymentMethod: "cash" | "creditCard"
+	billingInterval: 'weekly' | 'monthly' | 'yearly'
+	/* the number of periods the membership has validity for
+	 * e.g. 6 months, 12 months, 3 years, etc.
+	 * this is used to calculate the end date of the membership
+	 */
+	billingPeriods: number
 };
 
 interface MembershipPeriod {
-	membership: number // membership the period is attached to
-	start: Date // indicates the start of the period
-	end: Date // indicates the end of the period
+	/* membership the period is attached to */
+	membership: number
+	/* indicates the start of the period */
+	start: Date
+	/* indicates the end of the period */
+	end: Date
 	state: string
 };
 
