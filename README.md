@@ -1,3 +1,9 @@
+[![CI](https://github.com/pshaddel/fullstack-interview/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/pshaddel/fullstack-interview/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![codecov](https://codecov.io/github/pshaddel/fullstack-interview/graph/badge.svg?token=5DNFYP8N97)](https://codecov.io/github/pshaddel/fullstack-interview)
+[![Node.js Version](https://img.shields.io/badge/node-%3E%3D22-brightgreen.svg)](https://nodejs.org/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-Ready-blue.svg)](https://www.typescriptlang.org/)
+
 # Fullstack Interview Challenge
 
 > [!IMPORTANT]
