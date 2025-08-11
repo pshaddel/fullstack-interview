@@ -3,16 +3,18 @@ import { describe, it } from "node:test";
 import supertest from "supertest";
 import { app } from "../index";
 
-describe("Modern Membership Routes", () => {
-	describe("GET /legacy/memberships", () => {
-		it("should handle GET requests to /legacy/memberships", async () => {
+// const legacyRoute = "/legacy/memberships";
+const route = "/legacy/memberships";
+describe("Legacy Membership Routes", () => {
+	describe(`GET ${route}`, () => {
+		it(`Should handle GET requests to ${route}`, async () => {
 			// Test logic for GET /memberships
-			const response = await supertest(app).get("/legacy/memberships");
+			const response = await supertest(app).get(route);
 			equal(response.status, 200);
 		});
 
 		it("Should get membership and periods in the response body as an array", async () => {
-			const response = await supertest(app).get("/legacy/memberships");
+			const response = await supertest(app).get(route);
 			equal(response.status, 200);
 			equal(Array.isArray(response.body), true);
 			equal(!!response.body[0].membership, true);
@@ -20,7 +22,7 @@ describe("Modern Membership Routes", () => {
 		});
 
 		it("Should have membership with id, uuid, name, userId, recurringPrice, validFrom, validUntil, state, assignedBy, paymentMethod, billingInterval, billingPeriods", async () => {
-			const response = await supertest(app).get("/legacy/memberships");
+			const response = await supertest(app).get(route);
 			equal(response.status, 200);
 			// exisiting memberships
 			const memberships = [];
@@ -54,9 +56,9 @@ describe("Modern Membership Routes", () => {
 		});
 	});
 
-	describe("POST /legacy/memberships", () => {
+	describe(`POST ${route}`, () => {
 		it("should return 400 when name is missing", async () => {
-			const response = await supertest(app).post("/legacy/memberships").send({
+			const response = await supertest(app).post(route).send({
 				recurringPrice: 50,
 				billingInterval: "monthly",
 				billingPeriods: 6,
@@ -66,7 +68,7 @@ describe("Modern Membership Routes", () => {
 		});
 
 		it("should return 400 when recurringPrice is missing", async () => {
-			const response = await supertest(app).post("/legacy/memberships").send({
+			const response = await supertest(app).post(route).send({
 				name: "Test Membership",
 				billingInterval: "monthly",
 				billingPeriods: 6,
@@ -76,7 +78,7 @@ describe("Modern Membership Routes", () => {
 		});
 
 		it("should return 400 when both name and recurringPrice are missing", async () => {
-			const response = await supertest(app).post("/legacy/memberships").send({
+			const response = await supertest(app).post(route).send({
 				billingInterval: "monthly",
 				billingPeriods: 6,
 			});
@@ -85,7 +87,7 @@ describe("Modern Membership Routes", () => {
 		});
 
 		it("should return 400 when recurringPrice is negative", async () => {
-			const response = await supertest(app).post("/legacy/memberships").send({
+			const response = await supertest(app).post(route).send({
 				name: "Test Membership",
 				recurringPrice: -10,
 				billingInterval: "monthly",
@@ -96,7 +98,7 @@ describe("Modern Membership Routes", () => {
 		});
 
 		it("should return 400 when cash payment method with price over 100", async () => {
-			const response = await supertest(app).post("/legacy/memberships").send({
+			const response = await supertest(app).post(route).send({
 				name: "Test Membership",
 				recurringPrice: 150,
 				paymentMethod: "cash",
@@ -108,7 +110,7 @@ describe("Modern Membership Routes", () => {
 		});
 
 		it("should return 400 when monthly billing periods exceed 12", async () => {
-			const response = await supertest(app).post("/legacy/memberships").send({
+			const response = await supertest(app).post(route).send({
 				name: "Test Membership",
 				recurringPrice: 50,
 				billingInterval: "monthly",
@@ -119,19 +121,18 @@ describe("Modern Membership Routes", () => {
 		});
 
 		it("should return 400 when monthly billing periods are less than 6", async () => {
-			const response = await supertest(app).post("/legacy/memberships").send({
+			const response = await supertest(app).post(route).send({
 				name: "Test Membership",
 				recurringPrice: 50,
 				billingInterval: "monthly",
 				billingPeriods: 5,
 			});
-			console.log(response.body);
 			equal(response.status, 400);
 			equal(response.body.message, "billingPeriodsLessThan6Months");
 		});
 
 		it("should return 400 when yearly billing periods exceed 10", async () => {
-			const response = await supertest(app).post("/legacy/memberships").send({
+			const response = await supertest(app).post(route).send({
 				name: "Test Membership",
 				recurringPrice: 50,
 				billingInterval: "yearly",
@@ -142,7 +143,7 @@ describe("Modern Membership Routes", () => {
 		});
 
 		it("should return 400 when yearly billing periods are between 3 and 10", async () => {
-			const response = await supertest(app).post("/legacy/memberships").send({
+			const response = await supertest(app).post(route).send({
 				name: "Test Membership",
 				recurringPrice: 50,
 				billingInterval: "yearly",
@@ -153,7 +154,7 @@ describe("Modern Membership Routes", () => {
 		});
 
 		it("should return 400 when billing interval is invalid", async () => {
-			const response = await supertest(app).post("/legacy/memberships").send({
+			const response = await supertest(app).post(route).send({
 				name: "Test Membership",
 				recurringPrice: 50,
 				billingInterval: "daily",
@@ -164,7 +165,7 @@ describe("Modern Membership Routes", () => {
 		});
 
 		it("should successfully create membership with valid monthly data", async () => {
-			const response = await supertest(app).post("/legacy/memberships").send({
+			const response = await supertest(app).post(route).send({
 				name: "Valid Monthly Membership",
 				recurringPrice: 50,
 				billingInterval: "monthly",
@@ -177,7 +178,7 @@ describe("Modern Membership Routes", () => {
 		});
 
 		it("should successfully create membership with valid yearly data", async () => {
-			const response = await supertest(app).post("/legacy/memberships").send({
+			const response = await supertest(app).post(route).send({
 				name: "Valid Yearly Membership",
 				recurringPrice: 500,
 				billingInterval: "yearly",
@@ -190,7 +191,7 @@ describe("Modern Membership Routes", () => {
 		});
 
 		it("should allow cash payment with price exactly 100", async () => {
-			const response = await supertest(app).post("/legacy/memberships").send({
+			const response = await supertest(app).post(route).send({
 				name: "Cash Membership",
 				recurringPrice: 100,
 				paymentMethod: "cash",
@@ -201,7 +202,7 @@ describe("Modern Membership Routes", () => {
 		});
 
 		it("should allow cash payment with price exactly 100", async () => {
-			const response = await supertest(app).post("/legacy/memberships").send({
+			const response = await supertest(app).post(route).send({
 				name: "Cash Membership",
 				recurringPrice: 100,
 				paymentMethod: "cash",
@@ -214,7 +215,7 @@ describe("Modern Membership Routes", () => {
 		// it('Should be able to create a valid weekly membership', async () => {
 		//     const validFrom = new Date();
 		//     const response = await supertest(app)
-		//         .post("/legacy/memberships")
+		//         .post(legacyRoute)
 		//         .send({
 		//             name: "Valid Weekly Membership",
 		//             recurringPrice: 20,
@@ -238,7 +239,7 @@ describe("Modern Membership Routes", () => {
 
 		it("Should be able to create a valid weekly membership", async () => {
 			const validFrom = new Date();
-			const response = await supertest(app).post("/legacy/memberships").send({
+			const response = await supertest(app).post(route).send({
 				name: "Valid Weekly Membership",
 				recurringPrice: 20,
 				billingInterval: "monthly",
@@ -269,7 +270,7 @@ describe("Modern Membership Routes", () => {
 
 		it("Membership status should be expired if latest validUntil is in the past", async () => {
 			const validFrom = new Date("2023-01-01T00:00:00Z");
-			const response = await supertest(app).post("/legacy/memberships").send({
+			const response = await supertest(app).post(route).send({
 				name: "Expired Membership",
 				recurringPrice: 50,
 				billingInterval: "monthly",
@@ -283,7 +284,7 @@ describe("Modern Membership Routes", () => {
 
 		it("Membership status should be pending if the validFrom is in the future", async () => {
 			const validFrom = new Date("2030-01-01T00:00:00Z");
-			const response = await supertest(app).post("/legacy/memberships").send({
+			const response = await supertest(app).post(route).send({
 				name: "Pending Membership",
 				recurringPrice: 50,
 				billingInterval: "monthly",
