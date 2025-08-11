@@ -1,36 +1,37 @@
 import express, { type Request, type Response } from "express";
 
 interface Membership {
-	id: number
-	name: string
+	id: number;
+	name: string;
 	/* the user that the membership is assigned to */
-	user: number
+	user: number;
 	/* price the user has to pay for every period */
-	recurringPrice: number
-	validFrom: Date
-	validUntil: Date
-	state: 'active' | 'pending' | 'expired'
-	paymentMethod: "cash" | "creditCard"
-	billingInterval: 'weekly' | 'monthly' | 'yearly'
+	recurringPrice: number;
+	validFrom: Date;
+	validUntil: Date;
+	state: "active" | "pending" | "expired";
+	paymentMethod: "cash" | "creditCard";
+	billingInterval: "weekly" | "monthly" | "yearly";
 	/* the number of periods the membership has validity for
 	 * e.g. 6 months, 12 months, 3 years, etc.
 	 * this is used to calculate the end date of the membership
 	 */
-	billingPeriods: number
-};
+	billingPeriods: number;
+}
 
 interface MembershipPeriod {
 	/* membership the period is attached to */
-	membership: number
+	membership: number;
 	/* indicates the start of the period */
-	start: Date
+	start: Date;
 	/* indicates the end of the period */
-	end: Date
-	state: string
-};
+	end: Date;
+	state: string;
+}
 
 const memberships = require("../../data/memberships.json") as Membership[];
-const membershipPeriods = require("../../data/membership-periods.json") as MembershipPeriod[];
+const membershipPeriods =
+	require("../../data/membership-periods.json") as MembershipPeriod[];
 const { v4: uuidv4 } = require("uuid");
 
 const router = express.Router();
@@ -87,7 +88,7 @@ router.post("/", (req: Request, res: Response) => {
 		validUntil.setDate(validFrom.getDate() + req.body.billingPeriods * 7);
 	}
 
-	let state: Membership['state'] = "active";
+	let state: Membership["state"] = "active";
 	if (validFrom > new Date()) {
 		// Membership is not yet active - it starts in the future
 		state = "pending";
