@@ -12,7 +12,7 @@
 		"test": "npm run build && NODE_ENV=test node --test dist/tests/*.test.js",
 		"test:watch": "NODE_ENV=test tsc-watch --onSuccess \"node --test dist/tests/*.test.js\"",
 		"format:check": "biome check",
-		"format": "biome format --write",
+		"format": "biome format --write --fix",
 		"test:coverage": "NODE_ENV=test c8 node --test dist/tests/*.test.js"
 	},
 	"author": "",

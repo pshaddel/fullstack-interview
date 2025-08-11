@@ -3,7 +3,7 @@ import { equal } from "node:assert";
 import { app } from "../index";
 import request from "supertest";
 
-describe("Membership Routes", () => {
+describe("Express App", () => {
 	it("Should get 200 on health check", async () => {
 		const response = await request(app).get("/health");
 		equal(response.status, 200);

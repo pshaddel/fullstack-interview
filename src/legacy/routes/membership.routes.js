@@ -28,7 +28,7 @@ router.post("/", (req, res) => {
 				.status(400)
 				.json({ message: "billingPeriodsMoreThan12Months" });
 		}
-    if (req.body.billingPeriods < 6) {
+		if (req.body.billingPeriods < 6) {
 			return res.status(400).json({ message: "billingPeriodsLessThan6Months" });
 		}
 	} else if (req.body.billingInterval === "yearly") {
@@ -61,9 +61,11 @@ router.post("/", (req, res) => {
 
 	let state = "active";
 	if (validFrom > new Date()) {
+		// Membership is not yet active - it starts in the future
 		state = "pending";
 	}
 	if (validUntil < new Date()) {
+		// Membership has expired
 		state = "expired";
 	}
 
@@ -100,7 +102,7 @@ router.post("/", (req, res) => {
 			membershipId: newMembership.id,
 			start: validFrom,
 			end: validUntil,
-			state: "planned",
+			state: "planned", // why is it always planned?
 		};
 		membershipPeriods.push(period);
 		periodStart = validUntil;
