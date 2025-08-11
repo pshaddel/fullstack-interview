@@ -7,6 +7,7 @@
 - [x] Add biome for formatting and linting
 - [x] Add vscode settings folder in the project root(add biome and jest extensions)
 - [x] Use Either SWC or Node Core Test Library
+- [x] remove ts-node jest from project
 - [ ] Add the test coverage badge
 - [ ] Add Formatter and Linter and Tests to the Github CI
 - [ ] Add a dot env file for the port configuration and also NODE_ENV
