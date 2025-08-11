@@ -1,8 +1,8 @@
 {
-    "recommendations": [
-        "biomejs.biome",
-        "vivaxy.vscode-conventional-commits",
-        "ms-azuretools.vscode-docker",
-        "pshaddel.conventional-branch"
-    ]
+	"recommendations": [
+		"biomejs.biome",
+		"vivaxy.vscode-conventional-commits",
+		"ms-azuretools.vscode-docker",
+		"pshaddel.conventional-branch"
+	]
 }
