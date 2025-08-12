@@ -1,8 +1,8 @@
 import express, { type Request, type Response } from "express";
-import { calculateValidUntil } from "./membership.service";
+import { calculateValidUntil, getMemershipState } from "./membership.service";
 import { validateMembershipCreation } from "./membership.validator";
 
-interface Membership {
+export interface Membership {
 	id: number;
 	name: string;
 	/* the user that the membership is assigned to */
@@ -21,7 +21,7 @@ interface Membership {
 	billingPeriods: number;
 }
 
-interface MembershipPeriod {
+export interface MembershipPeriod {
 	/* membership the period is attached to */
 	membershipId: number;
 	/* indicates the start of the period */
@@ -58,15 +58,11 @@ router.post("/", (req: Request, res: Response) => {
 		billingInterval,
 	);
 
-	let state: Membership["state"] = "active";
-	if (validFrom > new Date()) state = "pending"; // Membership is not yet active - it starts in the future
-	if (validUntil < new Date()) state = "expired"; // Membership has expired
-
 	const newMembership = {
 		id: memberships.length + 1,
 		uuid: uuidv4(),
 		name: name,
-		state,
+		state: getMemershipState(validFrom, validUntil),
 		validFrom,
 		validUntil,
 		user: userId,

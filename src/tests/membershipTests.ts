@@ -297,6 +297,22 @@ export async function memberShipTests(route: string, name: string) {
 				equal(membership.state, "pending");
 			});
 
+			it("Membership status should be active if the validFrom is in the past and validUntil is in the future", async () => {
+				const validFrom = new Date();
+				// last month
+				validFrom.setMonth(validFrom.getMonth() - 1);
+				const response = await supertest(app).post(route).send({
+					name: "Active Membership",
+					recurringPrice: 50,
+					billingInterval: "monthly",
+					billingPeriods: 6,
+					validFrom: validFrom.toISOString(),
+				});
+				equal(response.status, 201);
+				const { membership } = response.body;
+				equal(membership.state, "active");
+			});
+
 			it("Valid Until should be calculated correctly based on billingInterval and billingPeriods", async () => {
 				// monthly billing
 				const validFrom = new Date("2023-01-01T00:00:00Z");
