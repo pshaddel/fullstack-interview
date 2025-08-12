@@ -8,6 +8,7 @@ export const errorHandler: ErrorRequestHandler = (err, _req, res, _next) => {
 	});
 };
 
+export type StandardErorrType = keyof typeof STANDARD_ERRORS;
 export const STANDARD_ERRORS = {
 	MISSING_MANDATORY_FIELDS: { status: 400, message: "missingMandatoryFields" },
 	NEGATIVE_RECURRING_PRICE: { status: 400, message: "negativeRecurringPrice" },

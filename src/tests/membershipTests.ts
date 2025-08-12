@@ -143,7 +143,7 @@ export async function memberShipTests(route: string, name: string) {
 				equal(response.body.message, "billingPeriodsMoreThan10Years");
 			});
 
-			it("should return 400 when yearly billing periods are between 3 and 10", async () => {
+			it("TODO: This Logic is CORRECT: should return 400 when yearly billing periods are between 3 and 10", async () => {
 				const response = await supertest(app).post(route).send({
 					name: "Test Membership",
 					recurringPrice: 50,

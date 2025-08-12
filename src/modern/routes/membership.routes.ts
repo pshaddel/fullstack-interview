@@ -1,4 +1,5 @@
 import express, { type Request, type Response } from "express";
+import { validateMembershipCreation } from "./membership.validator";
 
 interface Membership {
 	id: number;
@@ -10,7 +11,7 @@ interface Membership {
 	validFrom: Date;
 	validUntil: Date;
 	state: "active" | "pending" | "expired";
-	paymentMethod: "cash" | "creditCard";
+	paymentMethod: "cash" | "creditCard" | (string & {});
 	billingInterval: "weekly" | "monthly" | "yearly";
 	/* the number of periods the membership has validity for
 	 * e.g. 6 months, 12 months, 3 years, etc.
@@ -39,90 +40,64 @@ const router = express.Router();
 const userId = 2000;
 
 router.post("/", (req: Request, res: Response) => {
-	if (!req.body.name || !req.body.recurringPrice) {
-		return res.status(400).json({ message: "missingMandatoryFields" });
-	}
+	// const {
+	// 	name,
+	// 	recurringPrice,
+	// 	paymentMethod,
+	// 	billingInterval,
+	// 	billingPeriods,
+	// } = req.body;
 
-	if (req.body.recurringPrice < 0) {
-		return res.status(400).json({ message: "negativeRecurringPrice" });
-	}
+	const { error, data } = validateMembershipCreation(req.body);
+	if (error) return res.sendError(error);
+	const {
+		name,
+		paymentMethod,
+		recurringPrice,
+		billingPeriods,
+		billingInterval,
+		validFrom,
+	} = data;
 
-	if (req.body.recurringPrice > 100 && req.body.paymentMethod === "cash") {
-		return res.status(400).json({ message: "cashPriceBelow100" });
-	}
-
-	if (req.body.billingInterval === "monthly") {
-		if (req.body.billingPeriods > 12) {
-			return res
-				.status(400)
-				.json({ message: "billingPeriodsMoreThan12Months" });
-		}
-		if (req.body.billingPeriods < 6) {
-			return res.status(400).json({ message: "billingPeriodsLessThan6Months" });
-		}
-	} else if (req.body.billingInterval === "yearly") {
-		if (req.body.billingPeriods > 3) {
-			if (req.body.billingPeriods > 10) {
-				return res
-					.status(400)
-					.json({ message: "billingPeriodsMoreThan10Years" });
-			} else {
-				return res
-					.status(400)
-					.json({ message: "billingPeriodsLessThan3Years" });
-			}
-		}
-	} else {
-		return res.status(400).json({ message: "invalidBillingPeriods" });
-	}
-
-	const validFrom = req.body.validFrom
-		? new Date(req.body.validFrom)
-		: new Date();
 	const validUntil = new Date(validFrom);
-	if (req.body.billingInterval === "monthly") {
-		validUntil.setMonth(validFrom.getMonth() + req.body.billingPeriods);
-	} else if (req.body.billingInterval === "yearly") {
-		validUntil.setMonth(validFrom.getMonth() + req.body.billingPeriods * 12);
-	} else if (req.body.billingInterval === "weekly") {
-		validUntil.setDate(validFrom.getDate() + req.body.billingPeriods * 7);
+
+	if (billingInterval === "monthly") {
+		validUntil.setMonth(validFrom.getMonth() + billingPeriods);
+	} else if (billingInterval === "yearly") {
+		validUntil.setMonth(validFrom.getMonth() + billingPeriods * 12);
+	} else if (billingInterval === "weekly") {
+		validUntil.setDate(validFrom.getDate() + billingPeriods * 7);
 	}
 
 	let state: Membership["state"] = "active";
-	if (validFrom > new Date()) {
-		// Membership is not yet active - it starts in the future
-		state = "pending";
-	}
-	if (validUntil < new Date()) {
-		// Membership has expired
-		state = "expired";
-	}
+	if (validFrom > new Date()) state = "pending"; // Membership is not yet active - it starts in the future
+	if (validUntil < new Date()) state = "expired"; // Membership has expired
 
 	const newMembership = {
 		id: memberships.length + 1,
 		uuid: uuidv4(),
-		name: req.body.name,
+		name: name,
 		state,
 		validFrom: validFrom,
 		validUntil: validUntil,
 		user: userId,
-		paymentMethod: req.body.paymentMethod,
-		recurringPrice: req.body.recurringPrice,
-		billingPeriods: req.body.billingPeriods,
-		billingInterval: req.body.billingInterval,
+		paymentMethod: paymentMethod,
+		recurringPrice: recurringPrice,
+		billingPeriods: billingPeriods,
+		billingInterval: billingInterval,
 	};
 	memberships.push(newMembership);
 
 	const membershipPeriods = [];
 	let periodStart = validFrom;
-	for (let i = 0; i < req.body.billingPeriods; i++) {
+	for (let i = 0; i < billingPeriods; i++) {
 		const validFrom = periodStart;
 		const validUntil = new Date(validFrom);
-		if (req.body.billingInterval === "monthly") {
+		if (billingInterval === "monthly") {
 			validUntil.setMonth(validFrom.getMonth() + 1);
-		} else if (req.body.billingInterval === "yearly") {
+		} else if (billingInterval === "yearly") {
 			validUntil.setMonth(validFrom.getMonth() + 12);
-		} else if (req.body.billingInterval === "weekly") {
+		} else if (billingInterval === "weekly") {
 			validUntil.setDate(validFrom.getDate() + 7);
 		}
 		const period = {

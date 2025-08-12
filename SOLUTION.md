@@ -12,6 +12,7 @@
 - [x] Add Formatter and Linter and Tests to the Github CI
 - [x] Add a dot env file for the port configuration and also NODE_ENV
 - [ ] Add dockerfile for running the app inside the container
+- [ ] Use Docker Compose Watch and Dev Containers for development
 - [ ] Update dependencies
 
 ### Implementation Phases
@@ -33,6 +34,22 @@
 ```
 - [ ] id was missing in the membership interface
 - [ ] Periods are always calculatable from the membership, do we need to store them?
+- [ ] Remove magical numbers from the codebase, gather constants in a file, try to also bind them to the environment variables
+- [ ] another bug in here:
+```typescript
+if (req.body.billingPeriods > 3) {
+			if (req.body.billingPeriods > 10) {
+				return res
+					.status(400)
+					.json({ message: "billingPeriodsMoreThan10Years" });
+			} else {
+				return res
+					.status(400)
+					.json({ message: "billingPeriodsLessThan3Years" });
+			}
+		}
+```
+the case does not makes sense, when the number of billing periods is more than 3, it should be more than 3 years, not less than 3 years.
 
 ### Refactoring Points
 - [ ] Refactor error messages to a http error handler
