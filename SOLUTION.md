@@ -55,3 +55,6 @@ there is no membershipId in the membershipPeriods, it should be `membership` ins
 - [ ] Maybe go for uuid v7 for ids as it is sortable and has a timestamp
 - [x] Use Types or Enum for the state of the memberships
 - [ ] Should not we store the membership periods in a file or db?(take a look in the end) - go for it if you had time
+
+# Task2
+Diagram: https://link.excalidraw.com/l/7Kdv3h5TmJs/8LLTVwOAl8
