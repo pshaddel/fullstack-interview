@@ -1,9 +1,16 @@
 import express, { type Request, type Response } from "express";
 import {
 	calculateValidUntil,
+	createMembershipPeriods,
+	createNewMembership,
 	getMemberships,
-	getMemershipState,
 } from "./membership.service";
+
+const _memberships = require("../../data/memberships.json") as Membership[];
+const _membershipPeriods =
+	require("../../data/membership-periods.json") as MembershipPeriod[];
+const { v4: uuidv4 } = require("uuid");
+
 import { validateMembershipCreation } from "./membership.validator";
 
 export interface Membership {
@@ -37,16 +44,10 @@ export interface MembershipPeriod {
 	state: "planned" | "issued" | "cancelled";
 }
 
-const memberships = require("../../data/memberships.json") as Membership[];
-const membershipPeriods =
-	require("../../data/membership-periods.json") as MembershipPeriod[];
-const { v4: uuidv4 } = require("uuid");
-
-const router = express.Router();
-
 const userId = 2000;
 
-router.post("/", (req: Request, res: Response) => {
+const router = express.Router();
+router.post("/", async (req: Request, res: Response) => {
 	const { error, data } = validateMembershipCreation(req.body);
 	if (error) return res.sendError(error);
 	const {
@@ -64,49 +65,28 @@ router.post("/", (req: Request, res: Response) => {
 		billingInterval,
 	);
 
-	const newMembership = {
-		id: memberships.length + 1,
-		uuid: uuidv4(),
-		name: name,
-		state: getMemershipState(validFrom, validUntil),
+	const newMembership = await createNewMembership({
+		name,
 		validFrom,
 		validUntil,
-		user: userId,
 		paymentMethod,
 		recurringPrice,
 		billingPeriods,
 		billingInterval,
-	};
-	memberships.push(newMembership);
+		userId,
+	});
 
-	const newMembershipPeriods = [];
-	let periodStart = validFrom;
-	for (let i = 0; i < billingPeriods; i++) {
-		const validFrom = periodStart;
-		const validUntil = calculateValidUntil(
-			validFrom,
-			1, // each period is 1 billing period
-			billingInterval,
-		);
-		const period: MembershipPeriod = {
-			id: i + 1,
-			uuid: uuidv4(),
-			membershipId: newMembership.id,
-			start: validFrom,
-			end: validUntil,
-			state: "planned", // why is it always planned?
-		};
-		newMembershipPeriods.push(period);
-		periodStart = validUntil;
-	}
-	membershipPeriods.push(...newMembershipPeriods);
+	const newMembershipPeriods = await createMembershipPeriods({
+		validFrom,
+		billingPeriods,
+		billingInterval,
+		newMembershipId: newMembership.id,
+	});
 
-	res
-		.status(201)
-		.json({
-			membership: newMembership,
-			membershipPeriods: newMembershipPeriods,
-		});
+	res.status(201).json({
+		membership: newMembership,
+		membershipPeriods: newMembershipPeriods,
+	});
 });
 
 router.get("/", async (_req: Request, res: Response) => {

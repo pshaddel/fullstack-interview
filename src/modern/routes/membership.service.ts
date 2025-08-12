@@ -1,5 +1,6 @@
 import type { Membership, MembershipPeriod } from "./membership.routes";
 
+const { v4: uuidv4 } = require("uuid");
 const memberships = require("../../data/memberships.json") as Membership[];
 const membershipPeriods =
 	require("../../data/membership-periods.json") as MembershipPeriod[];
@@ -75,4 +76,72 @@ export async function getMemberships(): Promise<
 		rows.push({ membership, periods });
 	}
 	return rows;
+}
+
+export function createNewMembership(membership: {
+	name: string;
+	validFrom: Date;
+	validUntil: Date;
+	paymentMethod: Membership["paymentMethod"];
+	recurringPrice: number;
+	billingPeriods: number;
+	billingInterval: Membership["billingInterval"];
+	userId: number;
+}): Membership {
+	const {
+		name,
+		validFrom,
+		validUntil,
+		paymentMethod,
+		recurringPrice,
+		billingPeriods,
+		billingInterval,
+		userId,
+	} = membership;
+	const newMembership = {
+		id: memberships.length + 1,
+		uuid: uuidv4(),
+		name: name,
+		state: getMemershipState(validFrom, validUntil),
+		validFrom,
+		validUntil,
+		user: userId,
+		paymentMethod,
+		recurringPrice,
+		billingPeriods,
+		billingInterval,
+	};
+	memberships.push(newMembership);
+	return newMembership;
+}
+
+export function createMembershipPeriods(data: {
+	validFrom: Date;
+	billingPeriods: number;
+	billingInterval: Membership["billingInterval"];
+	newMembershipId: number;
+}) {
+	const { validFrom, billingPeriods, billingInterval, newMembershipId } = data;
+	const newMembershipPeriods = [];
+	let periodStart = validFrom;
+	for (let i = 0; i < billingPeriods; i++) {
+		const validFrom = periodStart;
+		const validUntil = calculateValidUntil(
+			validFrom,
+			1, // each period is 1 billing period
+			billingInterval,
+		);
+		const period: MembershipPeriod = {
+			id: i + 1,
+			uuid: uuidv4(),
+			membershipId: newMembershipId,
+			start: validFrom,
+			end: validUntil,
+			state: "planned", // why is it always planned?
+		};
+		newMembershipPeriods.push(period);
+		periodStart = validUntil;
+	}
+	membershipPeriods.push(...newMembershipPeriods);
+	return newMembershipPeriods;
 }
