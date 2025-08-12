@@ -4,34 +4,34 @@ const membershipPeriods =
 	require("../../data/membership-periods.json") as MembershipPeriod[];
 
 export interface Membership {
-    id: number;
-    name: string;
-    /* the user that the membership is assigned to */
-    user: number;
-    /* price the user has to pay for every period */
-    recurringPrice: number;
-    validFrom: Date;
-    validUntil: Date;
-    state: "active" | "pending" | "expired";
-    paymentMethod: "cash" | "creditCard" | (string & {});
-    billingInterval: "weekly" | "monthly" | "yearly";
-    /* the number of periods the membership has validity for
-     * e.g. 6 months, 12 months, 3 years, etc.
-     * this is used to calculate the end date of the membership
-     */
-    billingPeriods: number;
+	id: number;
+	name: string;
+	/* the user that the membership is assigned to */
+	user: number;
+	/* price the user has to pay for every period */
+	recurringPrice: number;
+	validFrom: Date;
+	validUntil: Date;
+	state: "active" | "pending" | "expired";
+	paymentMethod: "cash" | "creditCard" | (string & {});
+	billingInterval: "weekly" | "monthly" | "yearly";
+	/* the number of periods the membership has validity for
+	 * e.g. 6 months, 12 months, 3 years, etc.
+	 * this is used to calculate the end date of the membership
+	 */
+	billingPeriods: number;
 }
 
 export interface MembershipPeriod {
-    id: number;
-    uuid: string;
-    /* membership the period is attached to */
-    membershipId: number;
-    /* indicates the start of the period */
-    start: Date;
-    /* indicates the end of the period */
-    end: Date;
-    state: "planned" | "issued" | "cancelled";
+	id: number;
+	uuid: string;
+	/* membership the period is attached to */
+	membershipId: number;
+	/* indicates the start of the period */
+	start: Date;
+	/* indicates the end of the period */
+	end: Date;
+	state: "planned" | "issued" | "cancelled";
 }
 
 const DAYS_IN_WEEK = 7;
@@ -111,7 +111,6 @@ export async function getMemberships(): Promise<
 export function createNewMembership(membership: {
 	name: string;
 	validFrom: Date;
-	validUntil: Date;
 	paymentMethod: Membership["paymentMethod"];
 	recurringPrice: number;
 	billingPeriods: number;
@@ -121,13 +120,17 @@ export function createNewMembership(membership: {
 	const {
 		name,
 		validFrom,
-		validUntil,
 		paymentMethod,
 		recurringPrice,
 		billingPeriods,
 		billingInterval,
 		userId,
 	} = membership;
+	const validUntil = calculateValidUntil(
+		validFrom,
+		billingPeriods,
+		billingInterval,
+	);
 	const newMembership = {
 		id: memberships.length + 1,
 		uuid: uuidv4(),

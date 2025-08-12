@@ -1,6 +1,5 @@
 import express, { type Request, type Response } from "express";
 import {
-	calculateValidUntil,
 	createMembershipPeriods,
 	createNewMembership,
 	getMemberships,
@@ -22,16 +21,9 @@ router.post("/", async (req: Request, res: Response) => {
 		validFrom,
 	} = data;
 
-	const validUntil = calculateValidUntil(
-		validFrom,
-		billingPeriods,
-		billingInterval,
-	);
-
 	const newMembership = await createNewMembership({
 		name,
 		validFrom,
-		validUntil,
 		paymentMethod,
 		recurringPrice,
 		billingPeriods,
