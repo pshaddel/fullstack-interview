@@ -6,11 +6,6 @@ import {
 	getMemberships,
 } from "./membership.service";
 
-const _memberships = require("../../data/memberships.json") as Membership[];
-const _membershipPeriods =
-	require("../../data/membership-periods.json") as MembershipPeriod[];
-const { v4: uuidv4 } = require("uuid");
-
 import { validateMembershipCreation } from "./membership.validator";
 
 export interface Membership {

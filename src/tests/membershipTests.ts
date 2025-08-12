@@ -5,7 +5,7 @@ import { app } from "../index";
 import type {
 	Membership,
 	MembershipPeriod,
-} from "../modern/routes/membership.routes";
+} from "../modern/routes/membership.service";
 
 export async function memberShipTests(route: string, name: string) {
 	describe(name, () => {
