@@ -336,6 +336,54 @@ export async function memberShipTests(route: string, name: string) {
 					expectedYearlyValidUntil.getTime(),
 				);
 			});
+
+			it("Membership periods should be created correctly", async () => {
+				// monthly billing
+				const validFrom = new Date("2023-01-01T00:00:00Z");
+				const response = await supertest(app).post(route).send({
+					name: "Membership with Periods",
+					recurringPrice: 50,
+					billingInterval: "monthly",
+					billingPeriods: 6,
+					validFrom: validFrom.toISOString(),
+				});
+				equal(response.status, 201);
+				const { membership, membershipPeriods } = response.body;
+				equal(membershipPeriods.length, 6);
+				let periodStart = new Date(validFrom);
+				for (const period of membershipPeriods) {
+					equal(period.membershipId, membership.id);
+					equal(period.state, "planned");
+					equal(new Date(period.start).getTime(), periodStart.getTime());
+					const periodEnd = new Date(periodStart);
+					periodEnd.setMonth(periodEnd.getMonth() + 1);
+					equal(new Date(period.end).getTime(), periodEnd.getTime());
+					periodStart.setMonth(periodStart.getMonth() + 1);
+				}
+
+				// yearly billing
+				const yearlyResponse = await supertest(app).post(route).send({
+					name: "Yearly Membership with Periods",
+					recurringPrice: 600,
+					billingInterval: "yearly",
+					billingPeriods: 2,
+					validFrom: validFrom.toISOString(),
+				});
+				equal(yearlyResponse.status, 201);
+				const yearlyMembership = yearlyResponse.body.membership;
+				const yearlyPeriods = yearlyResponse.body.membershipPeriods;
+				equal(yearlyPeriods.length, 2);
+				periodStart = new Date(validFrom);
+				for (const period of yearlyPeriods) {
+					equal(period.membershipId, yearlyMembership.id);
+					equal(period.state, "planned");
+					equal(new Date(period.start).getTime(), periodStart.getTime());
+					const periodEnd = new Date(periodStart);
+					periodEnd.setFullYear(periodEnd.getFullYear() + 1);
+					equal(new Date(period.end).getTime(), periodEnd.getTime());
+					periodStart.setFullYear(periodStart.getFullYear() + 1);
+				}
+			});
 		});
 	});
 }

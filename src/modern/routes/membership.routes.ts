@@ -81,14 +81,11 @@ router.post("/", (req: Request, res: Response) => {
 	let periodStart = validFrom;
 	for (let i = 0; i < billingPeriods; i++) {
 		const validFrom = periodStart;
-		const validUntil = new Date(validFrom);
-		if (billingInterval === "monthly") {
-			validUntil.setMonth(validFrom.getMonth() + 1);
-		} else if (billingInterval === "yearly") {
-			validUntil.setMonth(validFrom.getMonth() + 12);
-		} else if (billingInterval === "weekly") {
-			validUntil.setDate(validFrom.getDate() + 7);
-		}
+		const validUntil = calculateValidUntil(
+			validFrom,
+			1, // each period is 1 billing period
+			billingInterval,
+		);
 		const period = {
 			id: i + 1,
 			uuid: uuidv4(),
