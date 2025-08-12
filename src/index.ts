@@ -1,6 +1,6 @@
 import express from "express";
 import { errorHandler, responseRouter } from "./error-handler.middleware";
-import membershipRoutes from "./modern/routes/membership.routes";
+import membershipRoutes from "./modern/membership/membership.routes";
 
 // because of the javascript module, we need to use require to import the legacy routes
 const legacyMembershipRoutes = require("./legacy/routes/membership.routes");
