@@ -50,6 +50,13 @@ if (req.body.billingPeriods > 3) {
 		}
 ```
 the case does not makes sense, when the number of billing periods is more than 3, it should be more than 3 years, not less than 3 years.
+- [ ] This is a bug:
+```typescript
+const periods = membershipPeriods.filter(
+			(p) => p.membershipId === membership.id,
+		);
+```
+there is no membershipId in the membershipPeriods, it should be `membership` instead of `p.membershipId`. - Fixed it in the json file
 
 ### Refactoring Points
 - [ ] Refactor error messages to a http error handler

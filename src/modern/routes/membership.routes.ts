@@ -1,4 +1,5 @@
 import express, { type Request, type Response } from "express";
+import { calculateValidUntil } from "./membership.service";
 import { validateMembershipCreation } from "./membership.validator";
 
 interface Membership {
@@ -22,12 +23,12 @@ interface Membership {
 
 interface MembershipPeriod {
 	/* membership the period is attached to */
-	membership: number;
+	membershipId: number;
 	/* indicates the start of the period */
 	start: Date;
 	/* indicates the end of the period */
 	end: Date;
-	state: string;
+	state: "planned" | "issued" | "cancelled";
 }
 
 const memberships = require("../../data/memberships.json") as Membership[];
@@ -40,14 +41,6 @@ const router = express.Router();
 const userId = 2000;
 
 router.post("/", (req: Request, res: Response) => {
-	// const {
-	// 	name,
-	// 	recurringPrice,
-	// 	paymentMethod,
-	// 	billingInterval,
-	// 	billingPeriods,
-	// } = req.body;
-
 	const { error, data } = validateMembershipCreation(req.body);
 	if (error) return res.sendError(error);
 	const {
@@ -59,15 +52,11 @@ router.post("/", (req: Request, res: Response) => {
 		validFrom,
 	} = data;
 
-	const validUntil = new Date(validFrom);
-
-	if (billingInterval === "monthly") {
-		validUntil.setMonth(validFrom.getMonth() + billingPeriods);
-	} else if (billingInterval === "yearly") {
-		validUntil.setMonth(validFrom.getMonth() + billingPeriods * 12);
-	} else if (billingInterval === "weekly") {
-		validUntil.setDate(validFrom.getDate() + billingPeriods * 7);
-	}
+	const validUntil = calculateValidUntil(
+		validFrom,
+		billingPeriods,
+		billingInterval,
+	);
 
 	let state: Membership["state"] = "active";
 	if (validFrom > new Date()) state = "pending"; // Membership is not yet active - it starts in the future
@@ -78,13 +67,13 @@ router.post("/", (req: Request, res: Response) => {
 		uuid: uuidv4(),
 		name: name,
 		state,
-		validFrom: validFrom,
-		validUntil: validUntil,
+		validFrom,
+		validUntil,
 		user: userId,
-		paymentMethod: paymentMethod,
-		recurringPrice: recurringPrice,
-		billingPeriods: billingPeriods,
-		billingInterval: billingInterval,
+		paymentMethod,
+		recurringPrice,
+		billingPeriods,
+		billingInterval,
 	};
 	memberships.push(newMembership);
 
@@ -119,7 +108,7 @@ router.get("/", (_req: Request, res: Response) => {
 	const rows = [];
 	for (const membership of memberships) {
 		const periods = membershipPeriods.filter(
-			(p: any) => p.membershipId === membership.id,
+			(p) => p.membershipId === membership.id,
 		);
 		rows.push({ membership, periods });
 	}

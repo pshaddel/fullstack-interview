@@ -296,6 +296,46 @@ export async function memberShipTests(route: string, name: string) {
 				const { membership } = response.body;
 				equal(membership.state, "pending");
 			});
+
+			it("Valid Until should be calculated correctly based on billingInterval and billingPeriods", async () => {
+				// monthly billing
+				const validFrom = new Date("2023-01-01T00:00:00Z");
+				const response = await supertest(app).post(route).send({
+					name: "Membership with Valid Until",
+					recurringPrice: 50,
+					billingInterval: "monthly",
+					billingPeriods: 6,
+					validFrom: validFrom.toISOString(),
+				});
+				equal(response.status, 201);
+				const { membership } = response.body;
+				const expectedValidUntil = new Date(validFrom);
+				expectedValidUntil.setMonth(expectedValidUntil.getMonth() + 6);
+				equal(
+					new Date(membership.validUntil).getTime(),
+					expectedValidUntil.getTime(),
+				);
+
+				// yearly billing
+				const yearlyResponse = await supertest(app).post(route).send({
+					name: "Yearly Membership with Valid Until",
+					recurringPrice: 600,
+					billingInterval: "yearly",
+					billingPeriods: 2,
+					validFrom: validFrom.toISOString(),
+				});
+
+				equal(yearlyResponse.status, 201);
+				const yearlyMembership = yearlyResponse.body.membership;
+				const expectedYearlyValidUntil = new Date(validFrom);
+				expectedYearlyValidUntil.setFullYear(
+					expectedYearlyValidUntil.getFullYear() + 2,
+				);
+				equal(
+					new Date(yearlyMembership.validUntil).getTime(),
+					expectedYearlyValidUntil.getTime(),
+				);
+			});
 		});
 	});
 }
