@@ -98,14 +98,72 @@ npm install
 
 ### Usage
 
+#### Local Development
+
 ```sh
 npm run start
 ```
 
+or
+
+```sh
+npm run start:dev
+```
+This will start the application in development mode, which includes:
+- TypeScript compilation
+- Hot reloading on file changes
+- Exposes the application on port 3099
+
+#### Docker Development (Recommended)
+
+Run the application with Docker Compose Watch for hot reloading:
+
+```sh
+npm run run-via-docker
+```
+
+Or directly:
+
+```sh
+docker compose watch
+```
+
+This will:
+
+- Build and start the application in a Docker container
+- Watch for file changes in `src/` and `package.json`
+- Automatically sync changes and restart the application
+- Expose the application on port 3099
+
+#### View Docker Logs
+
+```sh
+# View logs in real-time
+docker compose logs -f app-dev
+
+# View logs with timestamps
+docker compose logs -f -t app-dev
+```
+
 ### Run test
+
 ```sh
 npm run test
 ```
+
+if you want to run the tests in watch mode, you can use:
+
+```sh
+npm run test:watch
+```
+
+### Run test coverage
+
+```sh
+npm run test:coverage
+```
+
+
 
 ## 🗒️ Conditions
 
@@ -113,14 +171,14 @@ npm run test
 - You should put your code in GitHub or GitLab/Bitbucket and send us the link to your repository where we can find the source code. That means no ZIP files.
 - Please make sure to include any additional instructions in a readme in case you change something about the compilation or execution of the codebase.
 
-## 💻 Technologies:
+## 💻 Technologies
 
 We believe that great developers are not bound to a specific technology set, but no matter their toolbox they are able to think critically about how to structure and design good code. For this exercise, we provided just a small and simple set of tools to run the a application and tests. Feel free to use any library out there to help you with your implementation.
 
 ### Pre-installed
 
-- Express - https://expressjs.com/
-- TypeScript - https://www.typescriptlang.org/
-- Jest - https://jestjs.io/
+- [Express](https://expressjs.com/)
+- [TypeScript](https://www.typescriptlang.org/)
+- [Jest](https://jestjs.io/)
 
 Best of luck and looking forward to what you are able to accomplish! 🙂

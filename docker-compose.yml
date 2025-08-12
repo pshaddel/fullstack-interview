@@ -1,0 +1,22 @@
+  services:
+    app-dev:
+      image: fullstack-interview-app-dev
+      container_name: fullstack-interview-app-dev
+      build: .
+      ports:
+        - "3099:3099"
+      environment:
+        - NODE_ENV=development
+      develop:
+        watch:
+          - action: sync
+            path: ./src
+            target: /app/src
+            ignore:
+              - node_modules/
+          - action: sync
+            path: ./package.json
+            target: /app/package.json
+          - action: rebuild
+            path: ./package.json
+      restart: unless-stopped

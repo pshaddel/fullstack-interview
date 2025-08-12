@@ -4,6 +4,7 @@
 	"description": "technical assessment for the fullstack developer interview",
 	"main": "index.js",
 	"scripts": {
+		"run-via-docker": "docker compose watch",
 		"start": "npm run build && node dist/index.js",
 		"start:dev": "tsc-watch --onSuccess \"node dist/index.js\"",
 		"dev": "tsc-watch --onSuccess \"node dist/index.js\"",
