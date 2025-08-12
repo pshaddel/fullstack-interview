@@ -1,9 +1,7 @@
 import express from "express";
 import { errorHandler, responseRouter } from "./error-handler.middleware";
+import legacyMembershipRoutes from "./legacy/routes/membership.routes";
 import membershipRoutes from "./modern/membership/membership.routes";
-
-// because of the javascript module, we need to use require to import the legacy routes
-const legacyMembershipRoutes = require("./legacy/routes/membership.routes");
 
 const app = express();
 const port = process.env.PORT ? Number.parseInt(process.env.PORT) : 3099;
