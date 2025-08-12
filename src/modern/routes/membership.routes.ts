@@ -5,39 +5,7 @@ import {
 	createNewMembership,
 	getMemberships,
 } from "./membership.service";
-
 import { validateMembershipCreation } from "./membership.validator";
-
-export interface Membership {
-	id: number;
-	name: string;
-	/* the user that the membership is assigned to */
-	user: number;
-	/* price the user has to pay for every period */
-	recurringPrice: number;
-	validFrom: Date;
-	validUntil: Date;
-	state: "active" | "pending" | "expired";
-	paymentMethod: "cash" | "creditCard" | (string & {});
-	billingInterval: "weekly" | "monthly" | "yearly";
-	/* the number of periods the membership has validity for
-	 * e.g. 6 months, 12 months, 3 years, etc.
-	 * this is used to calculate the end date of the membership
-	 */
-	billingPeriods: number;
-}
-
-export interface MembershipPeriod {
-	id: number;
-	uuid: string;
-	/* membership the period is attached to */
-	membershipId: number;
-	/* indicates the start of the period */
-	start: Date;
-	/* indicates the end of the period */
-	end: Date;
-	state: "planned" | "issued" | "cancelled";
-}
 
 const userId = 2000;
 
