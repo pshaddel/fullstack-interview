@@ -11,8 +11,8 @@
 - [x] Add the test coverage badge
 - [x] Add Formatter and Linter and Tests to the Github CI
 - [x] Add a dot env file for the port configuration and also NODE_ENV
-- [ ] Add dockerfile for running the app inside the container
-- [ ] Use Docker Compose Watch and Dev Containers for development
+- [x] Add dockerfile for running the app inside the container
+- [x] Use Docker Compose Watch and Dev Containers for development
 - [ ] Update dependencies
 
 ### Implementation Phases
@@ -49,11 +49,9 @@ there is no membershipId in the membershipPeriods, it should be `membership` ins
 - [ ] `id` and `uuid` did not exist in the membership period
 
 ### Refactoring Points
-- [ ] Refactor error messages to a http error handler
+- [x] Refactor error messages to a http error handler
 - [ ] Use Zod for validation in the modern codebase with proper error handling
-- [ ] more readable version instead of all if else
+- [x] more readable version instead of all if else
 - [ ] Maybe go for uuid v7 for ids as it is sortable and has a timestamp
-- [ ] Use Enum for the state of the memberships
-- [ ] Maybe use express-zod library for express validation
-- [ ] Maybe extract the type from a zod schema
-- [ ] Should not we store the membership periods in a file or db?(take a look in the end)
+- [x] Use Types or Enum for the state of the memberships
+- [ ] Should not we store the membership periods in a file or db?(take a look in the end) - go for it if you had time
