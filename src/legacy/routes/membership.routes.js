@@ -84,7 +84,7 @@ router.post("/", (req, res) => {
 	};
 	memberships.push(newMembership);
 
-	const membershipPeriods = [];
+	const newMembershipPeriods = [];
 	let periodStart = validFrom;
 	for (let i = 0; i < req.body.billingPeriods; i++) {
 		const validFrom = periodStart;
@@ -104,11 +104,12 @@ router.post("/", (req, res) => {
 			end: validUntil,
 			state: "planned", // why is it always planned?
 		};
-		membershipPeriods.push(period);
+		newMembershipPeriods.push(period);
 		periodStart = validUntil;
 	}
+	membershipPeriods.push(...newMembershipPeriods);
 
-	res.status(201).json({ membership: newMembership, membershipPeriods });
+	res.status(201).json({ membership: newMembership, membershipPeriods: newMembershipPeriods });
 });
 
 /**

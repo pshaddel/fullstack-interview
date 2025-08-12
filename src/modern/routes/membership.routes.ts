@@ -1,5 +1,9 @@
 import express, { type Request, type Response } from "express";
-import { calculateValidUntil, getMemershipState } from "./membership.service";
+import {
+	calculateValidUntil,
+	getMemberships,
+	getMemershipState,
+} from "./membership.service";
 import { validateMembershipCreation } from "./membership.validator";
 
 export interface Membership {
@@ -22,6 +26,8 @@ export interface Membership {
 }
 
 export interface MembershipPeriod {
+	id: number;
+	uuid: string;
 	/* membership the period is attached to */
 	membershipId: number;
 	/* indicates the start of the period */
@@ -73,7 +79,7 @@ router.post("/", (req: Request, res: Response) => {
 	};
 	memberships.push(newMembership);
 
-	const membershipPeriods = [];
+	const newMembershipPeriods = [];
 	let periodStart = validFrom;
 	for (let i = 0; i < billingPeriods; i++) {
 		const validFrom = periodStart;
@@ -82,7 +88,7 @@ router.post("/", (req: Request, res: Response) => {
 			1, // each period is 1 billing period
 			billingInterval,
 		);
-		const period = {
+		const period: MembershipPeriod = {
 			id: i + 1,
 			uuid: uuidv4(),
 			membershipId: newMembership.id,
@@ -90,22 +96,22 @@ router.post("/", (req: Request, res: Response) => {
 			end: validUntil,
 			state: "planned", // why is it always planned?
 		};
-		membershipPeriods.push(period);
+		newMembershipPeriods.push(period);
 		periodStart = validUntil;
 	}
+	membershipPeriods.push(...newMembershipPeriods);
 
-	res.status(201).json({ membership: newMembership, membershipPeriods });
+	res
+		.status(201)
+		.json({
+			membership: newMembership,
+			membershipPeriods: newMembershipPeriods,
+		});
 });
 
-router.get("/", (_req: Request, res: Response) => {
-	const rows = [];
-	for (const membership of memberships) {
-		const periods = membershipPeriods.filter(
-			(p) => p.membershipId === membership.id,
-		);
-		rows.push({ membership, periods });
-	}
-	res.status(200).json(rows);
+router.get("/", async (_req: Request, res: Response) => {
+	const memberships = await getMemberships();
+	res.status(200).json(memberships);
 });
 
 export default router;

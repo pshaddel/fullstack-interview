@@ -1,5 +1,8 @@
-import type { Membership } from "./membership.routes";
+import type { Membership, MembershipPeriod } from "./membership.routes";
 
+const memberships = require("../../data/memberships.json") as Membership[];
+const membershipPeriods =
+	require("../../data/membership-periods.json") as MembershipPeriod[];
 const DAYS_IN_WEEK = 7;
 const MONTH_IN_YEAR = 12;
 /**
@@ -59,4 +62,17 @@ export function getMemershipState(
 	if (validFrom > new Date()) return "pending"; // Membership is not yet active - it starts in the future
 	if (validUntil < new Date()) return "expired"; // Membership has expired
 	return "active"; // Membership is currently active
+}
+
+export async function getMemberships(): Promise<
+	{ membership: Membership; periods: MembershipPeriod[] }[]
+> {
+	const rows = [];
+	for (const membership of memberships) {
+		const periods = membershipPeriods.filter(
+			(p) => p.membershipId === membership.id,
+		);
+		rows.push({ membership, periods });
+	}
+	return rows;
 }

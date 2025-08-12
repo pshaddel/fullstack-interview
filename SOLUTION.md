@@ -45,6 +45,8 @@ const periods = membershipPeriods.filter(
 		);
 ```
 there is no membershipId in the membershipPeriods, it should be `membership` instead of `p.membershipId`. - Fixed it in the json file
+- [ ] This variable shadows: `const membershipPeriods = [];`
+- [ ] `id` and `uuid` did not exist in the membership period
 
 ### Refactoring Points
 - [ ] Refactor error messages to a http error handler

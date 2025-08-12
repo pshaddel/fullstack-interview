@@ -2,6 +2,10 @@ import { equal } from "node:assert";
 import { describe, it } from "node:test";
 import supertest from "supertest";
 import { app } from "../index";
+import type {
+	Membership,
+	MembershipPeriod,
+} from "../modern/routes/membership.routes";
 
 export async function memberShipTests(route: string, name: string) {
 	describe(name, () => {
@@ -399,6 +403,45 @@ export async function memberShipTests(route: string, name: string) {
 					equal(new Date(period.end).getTime(), periodEnd.getTime());
 					periodStart.setFullYear(periodStart.getFullYear() + 1);
 				}
+			});
+
+			it("Should correctly create a new membership with all periods, and then get it as one of the memberships", async () => {
+				const validFrom = new Date();
+				const response = await supertest(app).post(route).send({
+					name: "New Membership with Periods",
+					recurringPrice: 50,
+					billingInterval: "monthly",
+					billingPeriods: 6,
+					validFrom: validFrom.toISOString(),
+				});
+				equal(response.status, 201);
+				const { membership, membershipPeriods } = response.body as {
+					membership: Membership;
+					membershipPeriods: { start: string; end: string }[];
+				};
+				equal(membership.name, "New Membership with Periods");
+				equal(membership.recurringPrice, 50);
+				equal(membership.billingInterval, "monthly");
+				equal(membership.billingPeriods, 6);
+				equal(new Date(membership.validFrom).getTime(), validFrom.getTime());
+
+				// Check if the membership is returned in the GET request
+				const getResponse = await supertest(app).get(route);
+				equal(getResponse.status, 200);
+				const memberships = getResponse.body as {
+					membership: Membership;
+					periods: MembershipPeriod[];
+				}[];
+				const foundMembership = memberships.find(
+					(m) => m.membership.id === membership.id,
+				);
+				equal(!!foundMembership?.membership, true);
+				// periods should be created correctly
+				equal(membershipPeriods.length, 6);
+
+				const responsePeriods = foundMembership?.periods;
+				equal(!!responsePeriods, true);
+				equal(responsePeriods?.length, 6);
 			});
 		});
 	});
